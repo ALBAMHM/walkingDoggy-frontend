@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const UserPets = () => {
   const [pets, setPets] = useState([]);
@@ -9,10 +9,25 @@ const UserPets = () => {
     const fetchPets = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/api/pets', {
-          headers: { Authorization: `Bearer ${token}` },
+        if (!token) {
+          setMessage('No token found, please log in.');
+          return;
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
-        setPets(response.data);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setPets(data);
       } catch (error) {
         console.error('Error fetching pets:', error);
         setMessage('Failed to fetch pets');
@@ -24,14 +39,22 @@ const UserPets = () => {
 
   return (
     <div>
-      <h2>Your Pets</h2>
+      <h2>Mis mascotas</h2>
       {message && <p>{message}</p>}
       <ul>
-        {pets.map(pet => (
-          <li key={pet._id}>{pet.name} - {pet.species}</li>
-        ))}
+        {pets.length > 0 ? (
+          pets.map(pet => (
+            <li key={pet._id}>{pet.name} - {pet.species}</li>
+          ))
+        ) : (
+          <li>Ninguna mascota encontrada.</li>
+        )}
       </ul>
+            <div className="links-container">
+                <Link to="/profile" className="link">Volver al perfil</Link>
+            </div>
     </div>
+    
   );
 };
 

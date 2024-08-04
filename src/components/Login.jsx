@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -19,12 +19,26 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/login', formData);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
             setMessage('Login successful!');
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', data.token);
+
             setTimeout(() => {
-                navigate('/profile'); // Redirige a /profile tras el login
+                navigate('/profile'); 
             }, 1000);
+
         } catch (error) {
             console.error('Error during login:', error);
             setMessage('Login failed');
@@ -33,7 +47,7 @@ const Login = () => {
 
     return (
         <div>
-            <h2>Login</h2>
+            <h2>Iniciar sesión</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="email">Email:</label>
@@ -47,7 +61,7 @@ const Login = () => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="password">Password:</label>
+                    <label htmlFor="password">Contraseña:</label>
                     <input
                         type="password"
                         id="password"
@@ -56,9 +70,13 @@ const Login = () => {
                         onChange={handleChange}
                         required
                     />
+               
                 </div>
                 <button type="submit">Login</button>
             </form>
+            <div className="links-container">
+                <Link to="/" className="link">Página inicio</Link>
+            </div>
             <p>{message}</p>
         </div>
     );

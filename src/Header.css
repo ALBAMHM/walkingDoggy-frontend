@@ -1,0 +1,21 @@
+.header {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    padding: 10px;
+    background-color: #ec6ac1; 
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    z-index: 1000; 
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo img {
+    height: 100px; 
+    width: auto; 
+  }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -22,14 +22,21 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/register', formData);
-            setMessage(response.data.message);
-            if (response.data.email) {
-                localStorage.setItem('token', response.data.token);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await response.json();
+            setMessage(data.message);
+            if (data.email) {
+                localStorage.setItem('token', data.token);
                 setTimeout(() => {
-                    navigate('/profile'); // Usa `navigate` para redirigir
+                    navigate('/profile');
                 }, 1000);
             }
         } catch (error) {
@@ -40,17 +47,20 @@ const Register = () => {
 
     return (
         <div>
-            <h2>Register</h2>
+            <h2>Registro</h2>
             <form onSubmit={handleSubmit}>
-                <input type="text" name="username" placeholder="Username" onChange={handleChange} />
+                <input type="text" name="username" placeholder="Usuario" onChange={handleChange} />
                 <input type="email" name="email" placeholder="Email" onChange={handleChange} />
-                <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-                <input type="text" name="first_name" placeholder="First Name" onChange={handleChange} />
-                <input type="text" name="last_name" placeholder="Last Name" onChange={handleChange} />
-                <input type="text" name="location" placeholder="Location" onChange={handleChange} />
+                <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} />
+                <input type="text" name="first_name" placeholder="Nombre" onChange={handleChange} />
+                <input type="text" name="last_name" placeholder="Apellido" onChange={handleChange} />
+                <input type="text" name="location" placeholder="Ubicación" onChange={handleChange} />
                 <input type="text" name="bio" placeholder="Bio" onChange={handleChange} />
-                <button type="submit">Register</button>
+                <button type="submit">Registrar</button>
             </form>
+            <div className="links-container">
+                <Link to="/" className="link">Página inicio</Link>
+            </div>
             {message && <p>{message}</p>}
         </div>
     );

@@ -1,17 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Register from './components/Register';
-import Profile from './components/Profile'; // Asegúrate de crear un componente Profile.jsx similar al de Register.jsx
+import Profile from './components/Profile'; 
 import Login from './components/Login';
 import CreatePet from './components/CrearPet';
 import UserPets from './components/UserPets';
 import AllPets from './components/AllPets'
+import HomePage from './components/HomePage';
+import Header from './components/Header';
+
+import './App.css'
 
 const App = () => {
     return (
         <Router>
+            <Header />
             <div className="App">
                 <Routes>
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/create-pet" element={<CreatePet />} />

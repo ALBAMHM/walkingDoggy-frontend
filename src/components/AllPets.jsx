@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const AllPets = () => {
   const [pets, setPets] = useState([]);
@@ -8,8 +8,12 @@ const AllPets = () => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/pets/all-pets');
-        setPets(response.data);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/all-pets`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPets(data);
       } catch (error) {
         console.error('Error fetching pets:', error);
         setMessage('Failed to fetch pets');
@@ -25,19 +29,19 @@ const AllPets = () => {
 
   return (
     <div>
-      <h2>All Pets</h2>
+      <h2>Encontrar mascotas cercanas</h2>
       {message && <p>{message}</p>}
       <ul>
         {pets.map(pet => (
           <li key={pet._id}>
             <h3>{pet.name}</h3>
-            <p>Species: {pet.species}</p>
-            <p>Breed: {pet.breed}</p>
-            <p>Age: {pet.age}</p>
+            <p>Especie: {pet.species}</p>
+            <p>Raza: {pet.breed}</p>
+            <p>Edad: {pet.age}</p>
             {pet.owner ? (
               <>
-                <p>Owner: {pet.owner.email}</p>
-                <p>Location: {pet.owner.location}</p>
+                <p>Propietario: {pet.owner.email}</p>
+                <p>Ubicación: {pet.owner.location}</p>
                 <button onClick={() => handleSendEmail(pet.owner.email)}>Send Message</button>
               </>
             ) : (
@@ -46,6 +50,10 @@ const AllPets = () => {
           </li>
         ))}
       </ul>
+      <div className="links-container">
+        <Link to="/profile" className="link">Volver al perfil</Link>
+        </div>
+ 
     </div>
   );
 };
